@@ -340,6 +340,34 @@ class RankTest {
         assertEquals(1, resultado.size());
         assertEquals("gemoneybank.ch", resultado.get(0).getUrl());
     }
+    @Test
+    void testPalabrasNoExistentes() throws IOException {
+    	System.out.println(" \n................");
+    	System.out.println("testPalabrasNoExistentes");
+        Web web = new Web("gemoneybank.ch");
+        listaWebs.anadir(0, web);
+        
+        Palabras.getPalabras().anadirPalabrasADiccionario("gato");
+        Palabras.getPalabras().anadirPalabrasADiccionario("money");
+        
+        grafo.crearGrafo(listaWebs);
+        Palabras.getPalabras().asociarPalabraConWebs2(listaWebs);
+        System.out.println(Palabras.getPalabras().getPalabrasAWebs());
+        
+        inicio=System.nanoTime();
+        ArrayList<Par> resultado = grafo.buscarPaginas("gato", "bank");
+        fin=System.nanoTime();
+        tiempoTotal=fin-inicio;
+        System.out.println("Tiempo de ejecución: " + tiempoTotal + " nanosegundos \n");
+        
+        // Imprimir resultados
+ 		System.out.println("\nPáginas según claves y PageRank:");
+ 		for (Par par :resultado) {
+ 			System.out.println(par);
+ 		}
+
+        assertEquals(0, resultado.size());
+    }
 
     @Test
     void testDosPaginasConAmbasPalabrasClave() throws IOException {

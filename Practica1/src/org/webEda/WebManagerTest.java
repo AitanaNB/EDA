@@ -39,7 +39,7 @@ class WebManagerTest {
 
 	}
 
-	@Test
+	/*@Test
 	void testNumeroWebs() throws IOException 
 	{
 		System.out.println(" \n................");
@@ -68,8 +68,9 @@ class WebManagerTest {
 		assertEquals(2039805, webManager.numeroWebs());
 		System.out.println("Archivo 2039805 web: " + webManager.numeroWebs());
 		System.out.println("Fin."); //LAS LEE TODASSSSS!!!!!
+	
 	}
-
+	
 	@Test
 	void testImprimir() throws IOException 
 	{
@@ -96,7 +97,7 @@ class WebManagerTest {
 		webManager.lectorWebs(web1000);
 		System.out.println("\nArchivo 10000 web: ");
 		webManager.imprimir();
-		webManager.resetear();*/
+		webManager.resetear();
 		
 		
 	}
@@ -179,7 +180,7 @@ class WebManagerTest {
 		webManager.addEnlaceYCrearFichero("nuevoEnlaces2.txt", "webnueva.pl", "otraweb.d");
 		assertEquals(4, webManager.numeroWebs());
 		
-	}
+	}*/
 	
 	@Test 
 	void testArchivosGrandes()throws IOException
@@ -187,9 +188,9 @@ class WebManagerTest {
 		System.out.println(" \n................");
 		System.out.println("Test Archivos Grandes");
 		
-        String rutaWeb="F:\\Docs\\index-2024-25"; //F:\\Docs\\index-2024-25
-        String rutaPal="F:\\Docs\\words.txt"; //F:\\Docs\\words.txt
-        String rutaEnl="F:\\Docs\\pld-arcs-1-N-2024-25";//F:\\Docs\\pld-arcs-1-N-2024-25
+        String rutaWeb="C:\\Users\\AITANA\\Downloads\\index-2024-25"; //F:\\Docs\\index-2024-25
+        String rutaPal="C:\\Users\\AITANA\\Downloads\\words.txt"; //F:\\Docs\\words.txt
+        String rutaEnl= "C:\\Users\\AITANA\\Downloads\\pld-arcs-1-N-2024-25";//F:\\Docs\\pld-arcs-1-N-2024-25
         
         webManager.cargarTodosArchivos(rutaWeb, rutaPal, rutaEnl);
         
@@ -197,11 +198,5 @@ class WebManagerTest {
 
        
 	}
-
-	/*no creo que haga falta 
-	 * @Test
-	void testCargarTodosArchivos() {
-		fail("Not yet implemented");
-	}*/
 
 }

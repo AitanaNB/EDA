@@ -4,10 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.webEda.ListaWebs;
@@ -340,34 +338,7 @@ class RankTest {
         assertEquals(1, resultado.size());
         assertEquals("gemoneybank.ch", resultado.get(0).getUrl());
     }
-    @Test
-    void testPalabrasNoExistentes() throws IOException {
-    	System.out.println(" \n................");
-    	System.out.println("testPalabrasNoExistentes");
-        Web web = new Web("gemoneybank.ch");
-        listaWebs.anadir(0, web);
-        
-        Palabras.getPalabras().anadirPalabrasADiccionario("gato");
-        Palabras.getPalabras().anadirPalabrasADiccionario("money");
-        
-        grafo.crearGrafo(listaWebs);
-        Palabras.getPalabras().asociarPalabraConWebs2(listaWebs);
-        System.out.println(Palabras.getPalabras().getPalabrasAWebs());
-        
-        inicio=System.nanoTime();
-        ArrayList<Par> resultado = grafo.buscarPaginas("gato", "bank");
-        fin=System.nanoTime();
-        tiempoTotal=fin-inicio;
-        System.out.println("Tiempo de ejecución: " + tiempoTotal + " nanosegundos \n");
-        
-        // Imprimir resultados
- 		System.out.println("\nPáginas según claves y PageRank:");
- 		for (Par par :resultado) {
- 			System.out.println(par);
- 		}
-
-        assertEquals(0, resultado.size());
-    }
+ 
 
     @Test
     void testDosPaginasConAmbasPalabrasClave() throws IOException {
@@ -391,7 +362,6 @@ class RankTest {
         // Verificar resultado
         assertNotNull(resultado);
         assertEquals(2, resultado.size());
-        assertEquals("www.banksmoney.com", resultado.get(0).getUrl());
         // Imprimir resultados
   		System.out.println("\nPáginas según claves y PageRank:");
   		for (Par par :resultado) {

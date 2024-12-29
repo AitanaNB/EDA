@@ -231,10 +231,11 @@ HashMap<String, ArrayList<String>> enlaces;
      
      public ArrayList<Par> buscarPaginas(String palabraClave1, String palabraClave2) 
      {
+    	 // Pre: Ambas palabras existen en el diccionario.  
     	 // Post: El resultado es una lista de las páginas web en las que 
     	 //       aparecen las palabras clave, ordenadas de mayor a menor por su pagerank,
     	 //       de manera que en las primeras posiciones aparecerán las páginas web con 
-    	 //       pagerank más alto
+    	 //       pagerank más alto.
     	 
     	 ArrayList<Par> resultado = new ArrayList<Par>();
     	 HashMap<String, Double> pageRank = calcularPageRank();
@@ -244,8 +245,8 @@ HashMap<String, ArrayList<String>> enlaces;
     	 }
     	 
     	 // Obtener las webs asociadas a ambas palabras clave
-    	 ArrayList<String> webs1 = Palabras.getPalabras().getPalabrasAWebs().getOrDefault(palabraClave1, new ArrayList<>());
-    	 ArrayList<String> webs2 = Palabras.getPalabras().getPalabrasAWebs().getOrDefault(palabraClave2, new ArrayList<>());
+    	 ArrayList<String> webs1 = Palabras.getPalabras().getPalabrasAWebs().get(palabraClave1);
+    	 ArrayList<String> webs2 = Palabras.getPalabras().getPalabrasAWebs().get(palabraClave2);
     	 
     	 // Encontrar la interseccion de las webs
     	 HashSet<String> interseccion = new HashSet<>(webs1);
@@ -258,9 +259,47 @@ HashMap<String, ArrayList<String>> enlaces;
     	 }
     	 
     	 // Ordenar la lista en orden descendente por PageRank
-    	 resultado.sort((p1, p2) -> Double.compare(p2.getPageRank(), p1.getPageRank()));
+    	 //resultado.sort((p1, p2) -> Double.compare(p2.getPageRank(), p1.getPageRank()));
 
+    	 quickSortPageRank(resultado, 0, resultado.size() - 1);
+    	 
+    	 
     	 return resultado;
      }
-	
+     private void quickSortPageRank(ArrayList<Par> lista, int izq, int der) {
+  		if (izq<der) {
+              int i = izq; //recorre desde la izquierda del vector
+              int j = der;
+              Par pivote = lista.get((izq + der)/2); //eleccion del pivote (elemento central)
+              Par aux;
+              
+              //la particion termina cuando i>j
+              while (i<=j) {
+                  //encontrar el primer elemento a la izquierda que es menor que el pivote
+                  while (lista.get(i).getPageRank()>pivote.getPageRank()) {
+                      i++; //avanza en la lista
+                  }
+                  //encontrar el primer elemento a la derecha que es mayor que el pivote
+                  while (lista.get(j).getPageRank()<pivote.getPageRank()) {
+                      j--; //retrocede en la lista
+                  }
+                  //intercambiar los elementos mal ubicados
+                  if (i<=j) {
+                      aux = lista.get(i);
+                      lista.set(i, lista.get(j));
+                      lista.set(j, aux);
+                      i++;
+                      j--;
+                  }
+              }
+
+              //hacer la particion de los subvectores izquierdo y derecho
+              if (izq<j) {
+                  quickSortPageRank(lista, izq, j); //ordenar la mitad izquierda
+              }
+              if (i<der) {
+                  quickSortPageRank(lista, i, der); //ordenar la mitad derecha
+              }
+          }
+      }
 }

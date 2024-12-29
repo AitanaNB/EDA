@@ -145,5 +145,11 @@ public class Palabras // MAE solo hay un diccionario
 			System.out.println("Palabra: " + palabra + " -> Webs: " + webs);
 		}
 	}
+	
+	public void resetear()
+	{
+		this.palabraAWebs.clear();
+		this.diccionario2.clear();
+	}
 
 }

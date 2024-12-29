@@ -9,8 +9,8 @@ import java.util.Queue;
 import java.util.Random;
 
 import org.webEda.ListaWebs;
+import org.webEda.Palabras;
 import org.webEda.Web;
-import org.webEda.WebManager;
 
 public class Graph {
 	
@@ -229,8 +229,38 @@ HashMap<String, ArrayList<String>> enlaces;
 	}
      
      
-     public ArrayList<Par> buscarPaginas(String palabraClave1, String palabraClave2) {
-    	 return null;
+     public ArrayList<Par> buscarPaginas(String palabraClave1, String palabraClave2) 
+     {
+    	 // Post: El resultado es una lista de las páginas web en las que 
+    	 //       aparecen las palabras clave, ordenadas de mayor a menor por su pagerank,
+    	 //       de manera que en las primeras posiciones aparecerán las páginas web con 
+    	 //       pagerank más alto
+    	 
+    	 ArrayList<Par> resultado = new ArrayList<Par>();
+    	 HashMap<String, Double> pageRank = calcularPageRank();
+    	 if (pageRank == null) {
+    		 System.out.println("El grafo esta vacio. No se puede calcular PageRank.");
+    	     return resultado; // Lista vacia si el grafo esta vacio
+    	 }
+    	 
+    	 // Obtener las webs asociadas a ambas palabras clave
+    	 ArrayList<String> webs1 = Palabras.getPalabras().getPalabrasAWebs().getOrDefault(palabraClave1, new ArrayList<>());
+    	 ArrayList<String> webs2 = Palabras.getPalabras().getPalabrasAWebs().getOrDefault(palabraClave2, new ArrayList<>());
+    	 
+    	 // Encontrar la interseccion de las webs
+    	 HashSet<String> interseccion = new HashSet<>(webs1);
+    	 interseccion.retainAll(webs2); // Mantener solo las webs comunes
+    	 
+    	 // Crear pares (URL, PageRank) para las webs comunes
+    	 for (String web : interseccion) {
+    		 double pr = pageRank.getOrDefault(web, 0.0);
+    	     resultado.add(new Par(web, pr));
+    	 }
+    	 
+    	 // Ordenar la lista en orden descendente por PageRank
+    	 resultado.sort((p1, p2) -> Double.compare(p2.getPageRank(), p1.getPageRank()));
+
+    	 return resultado;
      }
 	
 }

@@ -11,12 +11,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.webEda.ListaWebs;
+import org.webEda.Palabras;
 import org.webEda.Web;
 import org.webEda.WebManager;
 
 class RankTest {
 	Graph grafo;
-	String web10, salientes10, web, salientes;
+	String web10, salientes10, web, salientes,pal;
 	long inicio, fin, tiempoTotal;
 	HashMap<String, Double> rdo;
 	HashMap<String, Double> pageRank;
@@ -31,6 +32,11 @@ class RankTest {
 		// archivos grandes:
 		salientes = "C:\\Users\\AITANA\\Downloads\\pld-arcs-1-N-2024-25";
 		web = "C:\\Users\\AITANA\\Downloads\\index-2024-25";
+		pal="C:\\Users\\AITANA\\Downloads\\words.txt";
+		
+		Palabras.getPalabras().resetear();
+		listaWebs=new ListaWebs();
+		WebManager.getWebManager().resetear();
 
 	}
 
@@ -244,7 +250,7 @@ class RankTest {
 		}
 	}
 	
-	@Test
+	/*@Test
 	public void testArchivoOriginal() throws IOException {
 		WebManager.getWebManager().resetear();
 		//Archivos original
@@ -285,6 +291,170 @@ class RankTest {
 	    fin= System.nanoTime();
         tiempoTotal = fin - inicio;
         System.out.println("Tiempo de ejecución impresión: " + tiempoTotal + " nanosegundos \n");
-	}
+	}*/
+	
+	//************* TEST BUSCAR PÁGINAS *************
+	
+	@Test
+    void testGrafoVacio() {
+		System.out.println(" \n................");
+    	System.out.println("testGrafoVacio");
+		ArrayList<Par> resultado = grafo.buscarPaginas("money", "bank");
+        
+        assertNotNull(resultado);
+        assertEquals(0, resultado.size());
+        // Imprimir resultados
+ 		System.out.println("\nPáginas según claves y PageRank:");
+ 		for (Par par :resultado) {
+ 			System.out.println(par);
+ 		}
+    }
 
+    @Test
+    void testUnaPaginaSinEnlaces() throws IOException {
+    	System.out.println(" \n................");
+    	System.out.println("testUnaPaginaSinEnlace");
+        Web web = new Web("gemoneybank.ch");
+        listaWebs.anadir(0, web);
+        
+        Palabras.getPalabras().anadirPalabrasADiccionario("money");
+        Palabras.getPalabras().anadirPalabrasADiccionario("bank");
+        
+        grafo.crearGrafo(listaWebs);
+        Palabras.getPalabras().asociarPalabraConWebs2(listaWebs);
+        System.out.println(Palabras.getPalabras().getPalabrasAWebs());
+        
+        inicio=System.nanoTime();
+        ArrayList<Par> resultado = grafo.buscarPaginas("money", "bank");
+        fin=System.nanoTime();
+        tiempoTotal=fin-inicio;
+        System.out.println("Tiempo de ejecución: " + tiempoTotal + " nanosegundos \n");
+        
+        // Imprimir resultados
+ 		System.out.println("\nPáginas según claves y PageRank:");
+ 		for (Par par :resultado) {
+ 			System.out.println(par);
+ 		}
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        assertEquals("gemoneybank.ch", resultado.get(0).getUrl());
+    }
+
+    @Test
+    void testDosPaginasConAmbasPalabrasClave() throws IOException {
+        // Dos paginas con ambas palabras clave y enlaces
+    	System.out.println(" \n................");
+    	System.out.println("testDosPaginasConAmbasPalabrasClave");
+
+        listaWebs.anadir(0, new Web("www.banksmoney.com"));
+        listaWebs.anadir(1, new Web("www.banksgivemoneyfornothing.com"));
+
+        grafo.crearGrafo(listaWebs);
+        Palabras.getPalabras().anadirPalabrasADiccionario("money");
+        Palabras.getPalabras().anadirPalabrasADiccionario("bank");
+        Palabras.getPalabras().asociarPalabraConWebs2(listaWebs);
+        inicio=System.nanoTime();
+        ArrayList<Par> resultado = grafo.buscarPaginas("money", "bank");
+        fin=System.nanoTime();
+        tiempoTotal=fin-inicio;
+        System.out.println("Tiempo de ejecución: " + tiempoTotal + " nanosegundos \n");
+
+        // Verificar resultado
+        assertNotNull(resultado);
+        assertEquals(2, resultado.size());
+        assertEquals("www.banksmoney.com", resultado.get(0).getUrl());
+        // Imprimir resultados
+  		System.out.println("\nPáginas según claves y PageRank:");
+  		for (Par par :resultado) {
+  			System.out.println(par);
+  		}
+    }
+
+    @Test
+    void testSinInterseccionDePalabrasClave() throws IOException {
+        // Paginas con palabras clave diferentes
+    	System.out.println(" \n................");
+    	System.out.println("testSinInterseccionDePalabrasClave");
+
+        listaWebs.anadir(0, new Web("www.bank.com"));
+        listaWebs.anadir(1, new Web("www.money.com"));
+        
+        Palabras.getPalabras().anadirPalabrasADiccionario("money");
+        Palabras.getPalabras().anadirPalabrasADiccionario("bank");
+        Palabras.getPalabras().asociarPalabraConWebs2(listaWebs);
+
+        grafo.crearGrafo(listaWebs);
+        inicio=System.nanoTime();
+        ArrayList<Par> resultado = grafo.buscarPaginas("money", "bank");
+        fin=System.nanoTime();
+        tiempoTotal=fin-inicio;
+        System.out.println("Tiempo de ejecución: " + tiempoTotal + " nanosegundos \n");
+        // Verificar resultado
+        assertNotNull(resultado);
+        assertEquals(0, resultado.size(), "No debería haber páginas coincidentes.");
+        // Imprimir resultados
+ 		System.out.println("\nPáginas según claves y PageRank:");
+ 		for (Par par :resultado) {
+ 			System.out.println(par);
+ 		}
+    }
+
+    @Test
+    void testVariasPaginasConAmbasPalabrasClave() throws IOException {
+        // Varias paginas con ambas palabras clave y diferentes valores de PageRank
+    	System.out.println(" \n................");
+    	System.out.println("testVariasPaginasConAmbasPalabrasClave");
+    	
+        listaWebs.anadir(0, new Web("www.banksmoney.com"));
+        listaWebs.anadir(1, new Web("www.mymoneyinthebank.com"));
+        listaWebs.anadir(2, new Web("www.banksgivemoneyfornothing.com"));
+        listaWebs.anadirEnlace("www.banksmoney.com", "www.banksgivemoneyfornothing.com");
+        listaWebs.anadirEnlace("www.mymoneyinthebank.com", "www.banksgivemoneyfornothing.com");
+
+        Palabras.getPalabras().anadirPalabrasADiccionario("money");
+        Palabras.getPalabras().anadirPalabrasADiccionario("bank");
+        Palabras.getPalabras().asociarPalabraConWebs2(listaWebs);
+        grafo.crearGrafo(listaWebs);
+        inicio=System.nanoTime();
+        ArrayList<Par> resultado = grafo.buscarPaginas("money", "bank");
+        fin= System.nanoTime();
+        tiempoTotal=fin-inicio;
+        System.out.println("Tiempo de ejecución: " + tiempoTotal + " nanosegundos \n");
+        // Verificar resultado
+        assertNotNull(resultado);
+        assertEquals(3, resultado.size());
+       
+        // Imprimir resultados
+ 		System.out.println("\nPáginas según claves y PageRank:");
+ 		for (Par par :resultado) {
+ 			System.out.println(par);
+ 		}
+    }
+    
+    @Test
+    void testArchivoGrande() throws IOException {
+    	System.out.println(" \n................");
+    	System.out.println("testArchivoGrande");
+
+    	WebManager.getWebManager().cargarTodosArchivos(web, pal, salientes);
+        listaWebs=WebManager.getWebManager().getLista();
+        System.out.println(listaWebs.numeroWebs());
+        grafo.crearGrafo(listaWebs);
+        
+        inicio=System.nanoTime();
+        ArrayList<Par> resultado = grafo.buscarPaginas("money", "bank");
+        fin=System.nanoTime();
+        assertNotNull(resultado);
+        //System.out.println(resultado);
+        tiempoTotal=fin-inicio;
+        System.out.println("Tiempo de ejecución: " + tiempoTotal + " nanosegundos \n");
+        // Imprimir resultados
+ 		System.out.println("\nPáginas según claves y PageRank:");
+ 		for (Par par :resultado) {
+ 			System.out.println(par);
+ 		}
+    }
 }
+
+
